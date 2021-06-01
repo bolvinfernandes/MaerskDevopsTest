@@ -1,0 +1,63 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+# trigger build on commit to master
+trigger:
+  branches:
+    include:
+    - refs/heads/master
+name: $(MajorVersion).$(MinorVersion)$(Rev:.r) #Versioning the build as a 3 part version number
+variables:
+- name: buildConfiguration
+  value: 'Release'
+- name: MajorVersion
+  value: 1
+- name: MinorVersion
+  value: 0
+jobs:
+- job: Job_1
+  displayName: Release build
+  timeoutInMinutes: 30 #If a build takes more than 30mins to run it needs to be revisited
+  cancelTimeoutInMinutes: 1
+  pool:
+    vmImage: windows-latest
+  steps:
+  - checkout: self
+    clean: true
+  - task: DotNetCoreCLI@2
+    displayName: dotnet build #perform dotnet build that does an implicit restore
+    inputs:
+      command: build
+      projects: '**/*.csproj' #build 3 projects i.e. Web,API and test in one step 
+  - task: DotNetCoreCLI@2
+    displayName: dotnet test #perform dotnet test to see if any test fails
+    inputs:
+      command: test
+      projects: '**/*[Tt]esting/*.csproj' #assuming there's a Testing folder where the test csproj sits
+      arguments: --configuration $(buildConfiguration) --collect "Code coverage" --no-restore #avoid duplication of restore as it's run implicitly as part of dotnet build and test tasks
+  - task: DotNetCoreCLI@2
+    displayName: dotnet publish
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: '**/*.csproj'
+      arguments: --configuration $(buildConfiguration)
+      zipAfterPublish: false
+      modifyOutputPath: false
+  - task: ArchiveFiles@2
+    displayName: Zip Web App artifact files
+    inputs:
+      rootFolderOrFile: WebApp\bin\release\net5.0\publish #assuming this is the folder structure
+      includeRootFolder: false
+      archiveFile: $(Build.ArtifactStagingDirectory)\WebApp.zip #Create WebApp Artifact zip
+  - task: ArchiveFiles@2
+    displayName: Zip Web API artifact files
+    inputs:
+      rootFolderOrFile: WebAPI\bin\release\net5.0\publish #assuming this is the folder structure
+      includeRootFolder: false
+      archiveFile: $(Build.ArtifactStagingDirectory)\WebAPI.zip #Create WebAPI Artifact zip
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
+...
