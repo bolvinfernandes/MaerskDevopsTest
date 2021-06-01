@@ -1,0 +1,32 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger: none # will disable CI builds entirely
+pr: 
+- master
+variables:
+- name: buildConfiguration
+  value: 'Release'
+jobs:
+- job: Job_1
+  displayName: PullRequest build
+  timeoutInMinutes: 25
+  cancelTimeoutInMinutes: 1
+  pool:
+    vmImage: windows-latest
+  steps:
+  - checkout: self
+    clean: true
+  - task: DotNetCoreCLI@2
+    displayName: dotnet build #perform dotnet build that does an implicit restore
+    inputs:
+      command: build
+      projects: '**/*.csproj' #build 3 projects i.e. Web,API and test in one step 
+  - task: DotNetCoreCLI@2
+    displayName: dotnet test #perform dotnet test to see if any test fails
+    inputs:
+      command: test
+      projects: '**/*[Tt]esting/*.csproj' #assuming there's a Testing folder where the test csproj sits
+      arguments: --configuration $(buildConfiguration) --collect "Code coverage" --no-restore #avoid duplication of restore as it's run implicitly as part of dotnet build and test tasks
