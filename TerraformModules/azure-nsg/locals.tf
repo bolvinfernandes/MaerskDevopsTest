@@ -13,7 +13,7 @@ nsgrules = {
       destination_address_prefix = "192.168.2.0/24"
     }
   
-    http = {
+    https = {
       name                       = "https"
       priority                   = 201
       direction                  = "Inbound"
