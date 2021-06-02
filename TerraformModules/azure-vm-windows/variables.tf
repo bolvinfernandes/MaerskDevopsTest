@@ -1,0 +1,14 @@
+variable "environment" {}
+variable "location" {}
+variable "resource_group_name" {}
+variable "app_id" {}
+variable "size" {}
+variable "admin_username" {}
+variable "admin_password" {}
+variable "disk_caching" {}
+variable "disk_storage_account_type" {}
+variable "image_publisher" {}
+variable "image_offer" {}
+variable "image_sku" {}
+variable "image_version" {}
+variable "network_interface_ids" {}
