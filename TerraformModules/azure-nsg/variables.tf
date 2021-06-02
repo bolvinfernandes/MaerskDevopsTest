@@ -1,0 +1,14 @@
+variable "name" {}
+variable "location" {}
+variable "network_security_group_name" {}
+variable "resource_group_name" {}
+variable "network_security_group_name" {}
+variable "direction" {}
+variable "priority" {}
+variable "protocol" {}
+variable "access" {}
+variable "source_port_range" {}
+variable "destination_port_range" {}
+variable "source_address_prefixes" {}
+variable "destination_address_prefix" {}
+variable "depends-on" {}
