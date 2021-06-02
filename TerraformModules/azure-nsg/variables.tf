@@ -2,7 +2,6 @@ variable "name" {}
 variable "location" {}
 variable "network_security_group_name" {}
 variable "resource_group_name" {}
-variable "network_security_group_name" {}
 variable "direction" {}
 variable "priority" {}
 variable "protocol" {}
