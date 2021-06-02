@@ -1,6 +1,5 @@
 variable "location" {}
 variable "name" {}
-variable "env" {}
 variable "account_replication_type" {}
 variable "account_tier" {}
 variable "account_kind" {}
